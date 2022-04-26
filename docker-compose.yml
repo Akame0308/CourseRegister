@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql:1
+    container_name: mysql
+    cap_add:
+      - SYS_NICE
+    build: ./mysql
+    volumes:
+      - D:/data/mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+      - ./mysql/sql:/opt/sql
+    environment:
+      MYSQL_ROOT_PASSWORD: abcd1234
+      LANG: en_US.utf8
+    ports:
+      - "3306:3306"
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  
+  phpmyadmin: 
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: abcd1234
+      LANG: en_US.utf8
+    ports:
+      - "8080:80"
+  server:
+    image: server:1
+    restart: always
+    build: ./server
+    environment:
+      LANG: en_US.utf8
+    ports:
+      - "8800:80"
+
