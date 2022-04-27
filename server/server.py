@@ -63,21 +63,20 @@ def check_course_people(cursor:'MySQLdb.cursors.Cursor',data:dict):
 
 @db_login
 def check_same_course(cursor:'MySQLdb.cursors.Cursor',data:dict):
-    query = "select course_id from selected_course inner join course_instance on selected_course.course_instance_id = course_instance.course_instance_id where selected_course.student_id = '{studentId}'".format(**data)
+    query = "select course_id from selected_course inner join course_instance using(course_instance_id) where selected_course.student_id = '{studentId}'".format(**data)
     cursor.execute(query)
     
 
 @db_login
 def check_course_conflict(cursor:'MySQLdb.cursors.Cursor',data:dict):
     query1 = """select sections.section from selected_course inner join( 
-sections inner join course_instance on sections.course_instance_id = course_instance.course_instance_id) 
-on selected_course.course_instance_id = course_instance.course_instance_id
-where selected_course.student_id = '{studentId}';""".format(**data)
+sections inner join course_instance using(course_instance_id)) 
+using(course_instance_id) where selected_course.student_id = '{studentId}';""".format(**data)
     cursor.execute(query1)
     res1 = cursor.fetchall()
     res1 = set(map(lambda x:x["section"],res1))
     query2 = """select sections.section from course_instance 
-inner join sections on course_instance.course_instance_id = sections.course_instance_id 
+inner join sections using(course_instance_id)
 where course_instance.course_instance_id = '{courseId}';""".format(**data)
     cursor.execute(query2)
     res2 = cursor.fetchall()
@@ -89,7 +88,7 @@ where course_instance.course_instance_id = '{courseId}';""".format(**data)
 @db_login
 def check_credit_max_limit(cursor:'MySQLdb.cursors.Cursor',data:dict):
     cur_credit = get_current_credit(data)
-    query = "select Course.credit from Course_Instance inner join Course on Course_Instance.course_id = Course.course_id where Course_Instance.course_instance_id = '{courseId}';".format(**data)
+    query = "select Course.credit from Course_Instance inner join Course using(course_id) where Course_Instance.course_instance_id = '{courseId}';".format(**data)
     cursor.execute(query)
     if cur_credit + cursor.fetchone()["credit"] > 30:
         return Response(json.dumps({"code":409,"message":"Max credit exceed."}),409)
@@ -97,7 +96,7 @@ def check_credit_max_limit(cursor:'MySQLdb.cursors.Cursor',data:dict):
 @db_login
 def check_credit_min_limit(cursor:'MySQLdb.cursors.Cursor',data:dict):
     cur_credit = get_current_credit(data)
-    query = "select Course.credit from Course_Instance inner join Course on Course_Instance.course_id = Course.course_id where Course_Instance.course_instance_id = '{courseId}';".format(**data)
+    query = "select Course.credit from Course_Instance inner join Course using(course_id) where Course_Instance.course_instance_id = '{courseId}';".format(**data)
     cursor.execute(query)
     if cur_credit - cursor.fetchone()["credit"] < 9:
         return Response(json.dumps({"code":409,"message":"Min credit exceed."}),409)
@@ -126,10 +125,9 @@ def courseTable(cursor:'MySQLdb.cursors.Cursor'):
             return p
     
     query = """select Course_Instance.course_instance_id,Course.course_id,Course.course_name,Course.required,Course.credit,Course.description,Teacher.teacher_name,Sections.section from selected_course 
-inner join (((course_instance inner join course on course_instance.course_id = course.course_id) 
-inner join teacher on course_instance.teacher_id = teacher.teacher_id) 
-inner join sections on course_instance.course_instance_id = sections.course_instance_id) 
-on selected_course.course_instance_id = course_instance.course_instance_id 
+inner join (((course_instance inner join course using(course_id)) 
+inner join teacher using(teacher_id)) 
+inner join sections using(course_instance_id)) using(course_instance_id) 
 where selected_course.student_id = '{studentId}';""".format(**data)
     
     cursor.execute(query)
@@ -153,7 +151,7 @@ def select(cursor:'MySQLdb.cursors.Cursor'):
             return p
     queries = [
         "insert into selected_course(student_id, course_instance_id) values('{studentId}','{courseId}');".format(**data),
-        "update student set credits = credits+(select course.credit from course_instance inner join course on course_instance.course_id = course.course_id where course_instance.course_instance_id = '{courseId}') where student_id = '{studentId}'".format(**data),
+        "update student set credits = credits+(select course.credit from course_instance inner join course using(course_id) where course_instance.course_instance_id = '{courseId}') where student_id = '{studentId}'".format(**data),
         "update course_instance set now_people = now_people+1 where course_instance_id = '{courseId}'".format(**data)
     ]
     
@@ -175,7 +173,7 @@ def deselect(cursor:'MySQLdb.cursors.Cursor'):
             return p
     queries = [
         "delete from selected_course where student_id = '{studentId}' and course_instance_id = '{courseId}';".format(**data),
-        "update student set credits = credits-(select course.credit from course_instance inner join course on course_instance.course_id = course.course_id where course_instance.course_instance_id = '{courseId}') where student_id = '{studentId}';".format(**data),
+        "update student set credits = credits-(select course.credit from course_instance inner join course using(course_id) where course_instance.course_instance_id = '{courseId}') where student_id = '{studentId}';".format(**data),
         "update course_instance set now_people = now_people-1 where course_instance_id = '{courseId}';".format(**data)
     ]
     for query in queries:
@@ -186,9 +184,9 @@ def deselect(cursor:'MySQLdb.cursors.Cursor'):
 @app.route("/api/instanceCourse", methods=["POST"])
 @db_login
 def instanceCourse(cursor:'MySQLdb.cursors.Cursor'):
-    query = """select * from ((course_instance inner join course on course_instance.course_id = course.course_id) 
-inner join teacher on course_instance.teacher_id = teacher.teacher_id)
-inner join sections on course_instance.course_instance_id = sections.course_instance_id 
+    query = """select * from ((course_instance inner join course using(course_id)) 
+inner join teacher using(teacher_id))
+inner join sections using(course_instance_id)
 order by course_instance.course_instance_id;"""
     
     cursor.execute(query)
