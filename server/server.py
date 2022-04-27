@@ -35,7 +35,7 @@ def check_student(cursor:'MySQLdb.cursors.Cursor',data:dict):
 
 @db_login
 def check_course_instance(cursor:'MySQLdb.cursors.Cursor',data:dict):
-    query = "select * from student where student_id = '{studentId}'".format(**data)
+    query = "select * from Course_Instance where course_instance_id = '{courseId}'".format(**data)
     cursor.execute(query)
     if len(cursor.fetchall()) == 0:
         return Response(json.dumps({"code":404,"message":"Course not found."}),404)
@@ -202,10 +202,10 @@ def err500(e):
     return Response(json.dumps({"code":500,"message":"500 Internal server error."}))
 
 @app.after_request
-def after(response):
+def after(response:'Flask.response_class'):
     data = {
-        "request":request.data,
-        "response":response.data
+        "request":json.loads(request.data),
+        "response":json.loads(response.data)
     }
     print(data)
     return response

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mysql:
-    image: mysql:1
+    image: mysql:dbpro
     container_name: mysql
     cap_add:
       - SYS_NICE
@@ -20,7 +20,8 @@ services:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
   
   phpmyadmin: 
-    image: phpmyadmin/phpmyadmin:latest
+    image: phpmyadmin:dbpro
+    build: ./phpmyadmin
     restart: always
     environment:
       PMA_HOST: mysql
@@ -31,7 +32,7 @@ services:
       - "8080:80"
   
   server:
-    image: server:1
+    image: server:dbpro
     restart: always
     build: ./server
     volumes:
@@ -42,12 +43,12 @@ services:
       - "5000:5000"
     
   node:
-    image: node:1
+    image: node:dbpro
     restart: always
     build: ./frontend
     volumes:
       - D:/frontend:/root
     #command: sh -c "cd /app && yarn start"
     ports:
-      - "3000:3000"
+      - "80:3000"
 

@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import { Button, Form, FormControl } from 'react-bootstrap'
-import CourseTable from './CourseTable';
+import StudentCourseTable from '../compoents/StudentCourseTable';
 
 class Home extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             studentId: null,
@@ -11,28 +11,29 @@ class Home extends React.Component {
         }
     }
     handleChange(event) {
-        console.log(event);
         this.setState({
-            studentId: event.target.value,
+            studentId: event.target.value.toUpperCase(),
         })
-    }   
+    }
 
     handleSubmit(event) {
+        event.target[0].value="";
         event.preventDefault();
         this.setState({
-            courseTable: <CourseTable studentId={this.state.studentId}/>
+            courseTable: <StudentCourseTable key={this.state.studentId} studentId={this.state.studentId} />
         })
     }
     render() {
-        console.log(this.state.courseTable)
         return (
             <Fragment>
                 <Form horizontal='true' onSubmit={(e) => this.handleSubmit(e)}>
                     <h1>搜尋學生課表</h1>
-                    <FormControl type='text' placeholder='學號' onBlur={(e) => this.handleChange(e)} />
-                    <Button variant='primary' type='submit'>搜尋</Button>
+                    <div className='line-form'>
+                        <FormControl className='form-control' type='text' placeholder='學號' onChange={(e) => this.handleChange(e)} />
+                        <Button className='button' variant='primary' type='submit'>搜尋</Button>
+                    </div>
                 </Form>
-                { this.state.courseTable }
+                {this.state.courseTable}
             </Fragment>
         )
     }
