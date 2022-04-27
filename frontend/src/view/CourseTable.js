@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Stack, Button, Form, FormControl } from 'react-bootstrap'
 import Course from '../compoents/Course';
@@ -17,13 +18,13 @@ class CourseTable extends React.Component {
     async loadCourseData() {
         const requestOptions = {
             method: 'POST',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 studentId: this.state.studentId,
             })
         }
 
-        const response = await fetch('http://localhost/courseTable', requestOptions);
+        const response = await fetch('/api/courseTable', requestOptions);
         const json = await response.json();
         this.setState({ courseData: json.courseData });
     }
@@ -31,13 +32,13 @@ class CourseTable extends React.Component {
     async handleCourseSelect(id) {
         const requestOptions = {
             method: 'POST',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 studentId: this.state.studentId,
                 courseId: id
             })
         }
-        const response = await fetch('http://localhost/api/select', requestOptions);
+        const response = await fetch('/api/select', requestOptions);
         const json = await response.json();
         switch (json.selectStatus) {
             case 1:
@@ -52,7 +53,6 @@ class CourseTable extends React.Component {
     }
 
     handleChange(event) {
-        console.log(event);
         this.setState({
             targetCoruseId: event.target.value,
         })
@@ -62,15 +62,14 @@ class CourseTable extends React.Component {
         event.preventDefault();
         const requestOptions = {
             method: 'POST',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 studentId: this.state.studentId,
                 courseId: this.state.targetCoruseId
             })
         }
-        const response = await fetch('http://localhost/submit', requestOptions);
+        const response = await fetch('/api/submit', requestOptions);
         const json = await response.json();
-        console.log(json);
         switch (json.selectStatus) {
             case 1:
                 this.loadCourseData();
@@ -98,6 +97,7 @@ class CourseTable extends React.Component {
         const courseList = courseData.map((course, i) => (
             <Course key={i} course={course} onCourseSelect={(courseId) => this.handleCourseSelect(courseId)} />
         ))
+        console.log(this.state.studentId)
         return (
             <div className='course-table'>
                 <h1>學生{this.state.studentId}已選擇的課程</h1>
