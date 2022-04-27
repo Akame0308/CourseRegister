@@ -141,7 +141,7 @@ where selected_course.student_id = '{studentId}';""".format(**data)
 
 @app.route("/api/select", methods=["POST"])
 @db_login
-def select(cursor:'MySQLdb.cursors.Cursor'=None):
+def select(cursor:'MySQLdb.cursors.Cursor'):
     require_paras = {"studentId","courseId"}
     data = request.json
     if require_paras - set(data):
@@ -163,7 +163,7 @@ def select(cursor:'MySQLdb.cursors.Cursor'=None):
 
 @app.route("/api/deselect", methods=["POST"])
 @db_login
-def deselect(cursor:'MySQLdb.cursors.Cursor'=None):
+def deselect(cursor:'MySQLdb.cursors.Cursor'):
     require_paras = {"studentId","courseId"}
     data = request.json
     if require_paras - set(data):
@@ -182,13 +182,32 @@ def deselect(cursor:'MySQLdb.cursors.Cursor'=None):
         cursor.execute(query)
     return Response(json.dumps({"code":200,"message":"Successed."}),200)
 
+
+@app.route("/api/instanceCourse", methods=["POST"])
+@db_login
+def instanceCourse(cursor:'MySQLdb.cursors.Cursor'):
+    query = """select * from ((course_instance inner join course on course_instance.course_id = course.course_id) 
+inner join teacher on course_instance.teacher_id = teacher.teacher_id)
+inner join sections on course_instance.course_instance_id = sections.course_instance_id 
+order by course_instance.course_instance_id;"""
+    
+    cursor.execute(query)
+
+
+    results = cursor.fetchall()
+    return json.dumps(results)
+
 @app.errorhandler(500)
 def err500(e):
     return Response(json.dumps({"code":500,"message":"500 Internal server error."}))
 
 @app.after_request
 def after(response):
-    print(response)
+    data = {
+        "request":request.data,
+        "response":response.data
+    }
+    print(data)
     return response
 
 if __name__ == "__main__":
