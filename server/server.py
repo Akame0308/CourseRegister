@@ -199,7 +199,7 @@ order by course_instance.course_instance_id;"""
 
 @app.errorhandler(500)
 def err500(e):
-    return Response(json.dumps({"code":500,"message":"500 Internal server error."}))
+    return Response(json.dumps({"code":500,"message":"500 Internal server error."}),500)
 
 @app.after_request
 def after(response:'Flask.response_class'):
