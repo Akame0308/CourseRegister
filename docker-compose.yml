@@ -29,6 +29,7 @@ services:
       LANG: en_US.utf8
     ports:
       - "8080:80"
+  
   server:
     image: server:1
     restart: always
@@ -36,5 +37,15 @@ services:
     environment:
       LANG: en_US.utf8
     ports:
-      - "8800:80"
+      - "5000:5000"
+    
+  node:
+    image: node:1
+    restart: always
+    build: ./frontend
+    volumes:
+      - D:/frontend:/root
+    #command: sh -c "cd /app && yarn start"
+    ports:
+      - "3000:3000"
 
