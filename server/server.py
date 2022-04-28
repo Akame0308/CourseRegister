@@ -63,7 +63,8 @@ def check_course_people(cursor:'MySQLdb.cursors.Cursor',data:dict):
 
 @db_login
 def check_same_course(cursor:'MySQLdb.cursors.Cursor',data:dict):
-    query = "select course_id from selected_course inner join course_instance using(course_instance_id) where selected_course.student_id = '{studentId}'".format(**data)
+    query = """select course_id from course_instance where course_instance_id = '{courseId}' and course_id in 
+(select course_instance.course_id from selected_course inner join course_instance using(course_instance_id) where selected_course.student_id = '{studentId}');""".format(**data)
     cursor.execute(query)
     if len(cursor.fetchall()) != 0:
         return Response(json.dumps({"code":409,"message":"Same course selected."}),409)
