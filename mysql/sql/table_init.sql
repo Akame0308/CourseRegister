@@ -20,6 +20,14 @@ INSERT INTO `Teacher` VALUES(5667, '張志相', 8, 'male', 'cschang@fcu.edu.tw')
 INSERT INTO `Teacher` VALUES(5630, '王志宇', 8, 'male', 'wangcy@fcu.edu.tw');
 INSERT INTO `Teacher` VALUES(3746, '陳德生', 1, 'male', 'dschen@fcu.edu.tw');
 INSERT INTO `Teacher` VALUES(5125, '黃同瑤', 9, 'female', 'huangty@fcu.edu.tw');
+INSERT INTO `Teacher` VALUES(6213, '賴奇厚', 9, 'male', 'chlay@mail.fcu.edu.tw');
+INSERT INTO `Teacher` VALUES(3001, '周澤捷', 10, 'male', 'chz@mail.fcu.edu.tw');
+INSERT INTO `Teacher` VALUES(1029, '方淳民', 4, 'male', 'fang0129.tw@yahoo.com.tw');
+INSERT INTO `Teacher` VALUES(5058, '林泰生', 7, 'male', 'tyson@fcu.edu.tw');
+INSERT INTO `Teacher` VALUES(7777, '王小美', 1, 'female', 'mememe@fcu.edu.tw');
+
+
+
 
 
 
@@ -37,6 +45,7 @@ INSERT INTO `Department` VALUES(6, '通訊工程學系');
 INSERT INTO `Department` VALUES(7, '光電科學與工程學系');
 INSERT INTO `Department` VALUES(8, '通識中心');
 INSERT INTO `Department` VALUES(9, '應用數學學系');
+INSERT INTO `Department` VALUES(10, '統計學系');
 
 
 
@@ -61,6 +70,12 @@ INSERT INTO `Course` VALUES ('CIEE106', '邏輯設計', 3, 'yes', 3, 'Introducti
 INSERT INTO `Course` VALUES ('GHUC201', '中國文物欣賞', 8, 'no', 2, 'Introduction of China');
 INSERT INTO `Course` VALUES ('GHUC205', '日本歷史與文化', 8, 'no', 2, 'Introduction of Japan');
 INSERT INTO `Course` VALUES ('GHUR302', '台灣民間信仰', 8, 'no', 2, 'Introduction of Taiwan');
+INSERT INTO `Course` VALUES ('IDSS3002', '淨零碳排與碳足跡計算', 8, 'no', 2, 'Introduction of Earth');
+INSERT INTO `Course` VALUES ('COB102', '資訊網路', 10, 'no', 2, 'Introduction of Internet');
+INSERT INTO `Course` VALUES ('PHYS105', '普通物理(一)', 9, 'yes', 4, 'Introduction of Physical');
+INSERT INTO `Course` VALUES ('PHYS202', '電磁學(二)', 7, 'yes', 3, 'Introduction of maganaic');
+INSERT INTO `Course` VALUES ('IECS888', '競賽程式', 1, 'no', 4, 'Introduction of Programming Contest');
+
 
 
 CREATE TABLE `Course_Instance` (
@@ -84,6 +99,14 @@ INSERT INTO `Course_Instance` VALUES (2774, 'GHUC205', 2137, 79, 0);
 INSERT INTO `Course_Instance` VALUES (2779, 'GHUR302', 5667, 72, 0);
 INSERT INTO `Course_Instance` VALUES (2780, 'GHUR302', 5630, 72, 0);
 INSERT INTO `Course_Instance` VALUES (1226, 'MATH106', 5125, 72, 0);
+INSERT INTO `Course_Instance` VALUES (3529, 'IDSS3002', 6213, 40, 0);
+INSERT INTO `Course_Instance` VALUES (0497, 'COB102', 3001, 60, 0);
+INSERT INTO `Course_Instance` VALUES (2233, 'PHYS105', 1029, 60, 0);
+INSERT INTO `Course_Instance` VALUES (2471, 'PHYS202', 5058, 60, 0);
+INSERT INTO `Course_Instance` VALUES (8888, 'IECS8888', 7777, 90, 0);
+
+
+
 
 CREATE TABLE `Selected_Course` (
     `student_id` VARCHAR (500),
@@ -131,6 +154,21 @@ INSERT INTO `Sections` VALUES (2780, 309);
 INSERT INTO `Sections` VALUES (1226, 103);
 INSERT INTO `Sections` VALUES (1226, 104);
 INSERT INTO `Sections` VALUES (1226, 301);
+INSERT INTO `Sections` VALUES (3529, 106);
+INSERT INTO `Sections` VALUES (3529, 107);
+INSERT INTO `Sections` VALUES (0497, 101);
+INSERT INTO `Sections` VALUES (0497, 102);
+INSERT INTO `Sections` VALUES (2233, 203);
+INSERT INTO `Sections` VALUES (2233, 204);
+INSERT INTO `Sections` VALUES (2233, 501);
+INSERT INTO `Sections` VALUES (2233, 502);
+INSERT INTO `Sections` VALUES (2471, 207);
+INSERT INTO `Sections` VALUES (2471, 503);
+INSERT INTO `Sections` VALUES (2471, 504);
+INSERT INTO `Sections` VALUES (8888, 506);
+INSERT INTO `Sections` VALUES (8888, 507);
+INSERT INTO `Sections` VALUES (8888, 508);
+INSERT INTO `Sections` VALUES (8888, 509);
 
 CREATE TABLE `Student` (
     `student_id` VARCHAR(500) PRIMARY KEY,
@@ -144,6 +182,7 @@ CREATE TABLE `Student` (
 
 INSERT INTO `Student` VALUES ('D0901234', 'Mark', 202, 'Male', 'example@gmail.com', '台中市台中區台中路1號', 0);
 INSERT INTO `Student` VALUES ('D0901235', 'Jack', 201, 'Male', 'example1@gmail.com', '台中市台中區台中路2號', 10);
+INSERT INTO `Student` VALUES ('D0901236', 'Chark', 101, 'Male', 'example2@gmail.com', '台中市台中區台中路3號', 0);
 
 
 CREATE TABLE `Class` (
