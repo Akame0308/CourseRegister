@@ -65,6 +65,8 @@ def check_course_people(cursor:'MySQLdb.cursors.Cursor',data:dict):
 def check_same_course(cursor:'MySQLdb.cursors.Cursor',data:dict):
     query = "select course_id from selected_course inner join course_instance using(course_instance_id) where selected_course.student_id = '{studentId}'".format(**data)
     cursor.execute(query)
+    if len(cursor.fetchall()) != 0:
+        return Response(json.dumps({"code":409,"message":"Same course selected."}),409)
     
 
 @db_login
@@ -144,7 +146,7 @@ def select(cursor:'MySQLdb.cursors.Cursor'):
     data = request.json
     if require_paras - set(data):
         return Response(json.dumps({"code":400,"message":"Bad request."}),400)
-    check_list = [check_student,check_course_instance,check_already_select,check_course_people,check_same_course,check_course_conflict,check_credit_max_limit]
+    check_list = [check_student,check_course_instance,check_already_select,check_same_course,check_course_people,check_course_conflict,check_credit_max_limit]
     for func in check_list:
         p = func(data)
         if p != None:
